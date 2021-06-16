@@ -3,23 +3,25 @@
 <head>
   <title>Iphone Stop Watch</title>
   <link rel="stylesheet" href="style.css" />
-  
+
 </head>
 
 <body>
-  <div class="card">
-  <h1 id="timer">
-    <time>00:00:00</time>
-  </h1>
-  <button id="lap-reset">Reset</button>
-  <button id="start-stop">Start</button>
-
-  <button id="temp-stop">Stop</button>
-  <button id="temp-lap">Lap</button>
-  <ul id="container">
-  </ul>
-  </div>
-  <script type="text/javascript" src="stopwatch.js"></script>
+  <div class="layoutContainer">
+    <div class="card">
+      <h1 id="timerDisplay">
+        <time>00:00:00</time>
+      </h1>
+      <div class="timerControlContainer">
+        <button id="btnLapReset" class="round-button gray disabled">Lap</button>
+        <button id="btnStartStop" class="round-button green">Start</button>
+        <button id="temp-stop">Stop</button>
+        <button id="temp-lap">Lap</button>
+      </div>
+      <ul id="lapDisplayContainer">
+      </ul>
+    </div>
+    <script type="text/javascript" src="stopwatch.js"></script>
 </body>
 
 </html>
