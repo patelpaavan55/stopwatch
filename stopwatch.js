@@ -103,8 +103,8 @@ lapResetButton.onclick = function() {
         lapWrapper.classList.add('lap-item');
         // let newHrTag = document.createElement('hr');
         // newHrTag.classList.add('separator');
-        lapDisplayContainer.appendChild(newLap);
         // lapDisplayContainer.appendChild(newHrTag);
+        lapDisplayContainer.appendChild(newLap);
         newLap.appendChild(lapWrapper);
         lapWrapper.appendChild(lapNumber);
         lapWrapper.appendChild(lapTime);

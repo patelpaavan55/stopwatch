@@ -9,9 +9,9 @@
 <body>
     <div class="layoutContainer">
         <div class="card">
-            <timerDisplay id="timerDisplay">
+            <h1 id="timerDisplay">
                 <time>00:00.00</time>
-            </timerDisplay>
+            </h1>
             <div class="timerControlContainer">
                 <button id="btnLapReset" class="roundButton gray disabled">Lap</button>
                 <button id="btnStartStop" class="roundButton green">Start</button>
@@ -21,7 +21,9 @@
             <ul id="lapDisplayContainer">
             </ul>
         </div>
-        <script type="text/javascript" src="stopwatch.js"></script>
+        <script defer src="Counter.js" type="module"></script>
+        <script defer src="utils/getFormattedTime.js" type="module"></script>
+        <script type="module" src="stopwatch2.js"></script>
 </body>
 
 </html>

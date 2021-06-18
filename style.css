@@ -1,23 +1,51 @@
+* {
+    box-sizing: border-box;
+}
+
+h1 {
+    padding-left: 1px;
+    padding-right: 1px;
+}
+
 .layoutContainer {
     display: flex;
     justify-content: center;
     align-items: flex-start;
 }
 
-ul#lapDisplayContainer {
+.lapOuterContainer {
     height: 150px;
     width: 180px;
-    max-height: 150px;
-    min-height: 150px;
+    /* max-height: 150px;
+    min-height: 150px; */
     overflow-y: auto;
-    list-style-type: none;
     padding: 10px;
     display: flex;
     /* flex: 1; */
     flex-direction: column-reverse;
     align-items: stretch;
     justify-content: flex-end;
+    border: 1px solid green;
 }
+
+ul#lapDisplayContainer {
+    height: 150px;
+    width: 180px;
+    overflow-y: auto;
+    padding: 10px;
+    list-style-type: none;
+    /* display: flex;
+    flex-direction: column-reverse;
+    align-items: stretch; */
+    /* justify-content: flex-end; */
+    /* border: 1px solid green; */
+}
+
+
+/* ul#lapDisplayContainer> :first-child {
+    margin-top: auto !important;
+}
+    /* use !important to prevent breakage from child margin settings */
 
 .card {
     /* Add shadows to create the "card" effect */
@@ -120,8 +148,23 @@ li {
 
 .lap-item {
     display: flex;
-    min-height: min-content;
+    /* min-height: min-content; */
     justify-content: space-between;
+    /* border: 1px solid blue; */
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.shortestLap {
+    color: #2ed158;
+}
+
+.longestLap {
+    color: #ff453a;
+}
+
+.lap-item p {
+    margin: 0;
 }
 
 .separator {
