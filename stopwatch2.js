@@ -10,6 +10,7 @@ let timerDisplay = document.getElementById('timerDisplay'),
     isPaused = false,
     overallTime = 0;
 let lapArr = [];
+let lapIntervalArr = [];
 
 lapResetButton.disabled = true;
 
@@ -112,19 +113,49 @@ lapResetButton.onclick = function() {
         lapWrapper.appendChild(lapNumber);
         lapWrapper.appendChild(lapTime);
         lapNumber.innerHTML = "Lap " + (lapArr.length + 1);
-        // lapTime.innerHTML = minsDisplay + ":" + secsDisplay + "." + milisecsDisplay;
         let lapTimeStamp = Date.now();
-        // console.log("My Lap Time Stamp: " + lapTimeStamp);
+        let lapInterval;
+
         if (!lapArr.length) {
-            lapTime.innerHTML = getFormattedTime((lapTimeStamp - startTime));
+            lapInterval = lapTimeStamp - startTime;
         } else {
             let previousLap = lapArr[lapArr.length - 1];
-            lapTime.innerHTML = getFormattedTime((lapTimeStamp - previousLap[1])) + " -> " + timerDisplay.textContent;
+            lapInterval = lapTimeStamp - previousLap[1];
+            // lapTime.innerHTML = getFormattedTime((lapTimeStamp - previousLap[1])) + " -> " + timerDisplay.textContent;
         }
-        lapArr.push([newLap, lapTimeStamp]);
-        if (lapArr.length > 1) {
+        lapTime.innerHTML = getFormattedTime(lapInterval);
+        lapWrapper.id = lapIntervalArr.length + 1;
+        lapIntervalArr.push([lapIntervalArr.length + 1, lapInterval]);
+        lapArr.push([lapArr.length + 1, lapTimeStamp]);
+        console.log(lapArr)
+        console.log("Before Sorting:" + lapIntervalArr);
 
+        if (lapArr.length > 1) {
+            let children = lapDisplayContainer.children;
+            //removing previous shortest and longest laps
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].firstChild.classList.contains("shortestLap")) {
+                    children[i].firstChild.classList.remove("shortestLap")
+                }
+                if (children[i].firstChild.classList.contains("longestLap")) {
+                    children[i].firstChild.classList.remove("longestLap");
+                }
+            }
+            let shortestLapId, longestLapId;
+            lapIntervalArr.sort((a, b) => a[1] - b[1]);
+            shortestLapId = String(lapIntervalArr[0][0]);
+            longestLapId = String(lapIntervalArr[lapIntervalArr.length - 1][0]);
+            console.log("After Sorting:" + lapIntervalArr);
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].firstChild.id === shortestLapId) {
+                    children[i].firstChild.classList.add("shortestLap");
+                }
+                if (children[i].firstChild.id === longestLapId) {
+                    children[i].firstChild.classList.add("longestLap");
+                }
+            }
         }
+
     } else if (String(lapResetButton.innerHTML).toLowerCase() === "reset") {
         timerDisplay.textContent = "00:00.00";
         startTime = 0;
