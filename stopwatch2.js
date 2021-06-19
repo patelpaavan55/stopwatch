@@ -6,7 +6,9 @@ let timerDisplay = document.getElementById('timerDisplay'),
     lapResetButton = document.getElementById('btnLapReset'),
     lapDisplayContainer = document.getElementById('lapDisplayContainer'),
     startTime = 0,
-    isRunning = false;
+    isRunning = false,
+    isPaused = false,
+    overallTime = 0;
 let lapArr = [];
 
 lapResetButton.disabled = true;
@@ -44,27 +46,53 @@ function changeToLap() {
     lapResetButton.classList.add("disabled");
 }
 
+function getTimeElapsedSinceLastStart() {
+    if (!isRunning) {
+        return 0;
+    }
+    return Date.now() - startTime;
+}
+
 
 let timer;
 const timerUpdate = () => {
     timer = requestAnimationFrame(timerUpdate);
-    timerDisplay.textContent = getFormattedTime((Date.now() - startTime));
+    // timerDisplay.textContent = getFormattedTime((Date.now() - startTime));
+    timerDisplay.textContent = getFormattedTime((getTime()));
+
+}
+
+function getTime() {
+    if (!startTime) {
+        return 0;
+    }
+    if (isRunning) {
+        return overallTime + getTimeElapsedSinceLastStart();
+    }
+    return overallTime;
+
 }
 
 
 startStopButton.onclick = () => {
     if (!isRunning) {
-        isRunning = true;
         changeToStop();
+        isRunning = true;
         startTime = Date.now();
         requestAnimationFrame(timerUpdate);
 
     } else {
-        isRunning = false;
         // new_timer.stop();
         changeToStart();
         cancelAnimationFrame(timer);
-        // // pauseTime = Date.now();
+        console.log("Stop Time: " + Date.now());
+        console.log("Text Value: " + timerDisplay.textContent);
+        overallTime = overallTime + getTimeElapsedSinceLastStart();
+        console.log("Overall :" + getFormattedTime(overallTime));
+        isRunning = false;
+        isPaused = true;
+        // startTime = overallTime;
+        // pauseTime = Date.now();
         // clearTimeout(time);
     }
 };
@@ -88,14 +116,10 @@ lapResetButton.onclick = function() {
         let lapTimeStamp = Date.now();
         // console.log("My Lap Time Stamp: " + lapTimeStamp);
         if (!lapArr.length) {
-            // console.log("First TIme: " + getFormattedTime((lapTimeStamp - startTime)));
             lapTime.innerHTML = getFormattedTime((lapTimeStamp - startTime));
         } else {
             let previousLap = lapArr[lapArr.length - 1];
-            // console.log("Array: " + lapArr);
-            // console.log("Previous Value: " + previousLap);
-            // console.log("Current Lap Value: " + getFormattedTime((lapTimeStamp - previousLap[1])));
-            lapTime.innerHTML = getFormattedTime((lapTimeStamp - previousLap[1]));
+            lapTime.innerHTML = getFormattedTime((lapTimeStamp - previousLap[1])) + " -> " + timerDisplay.textContent;
         }
         lapArr.push([newLap, lapTimeStamp]);
         if (lapArr.length > 1) {
@@ -104,6 +128,9 @@ lapResetButton.onclick = function() {
     } else if (String(lapResetButton.innerHTML).toLowerCase() === "reset") {
         timerDisplay.textContent = "00:00.00";
         startTime = 0;
+        // isPaused = false;
+        isRunning = false;
+        overallTime = 0;
         removeAllChildNodes(lapDisplayContainer);
         lapArr = [];
         changeToLap();
