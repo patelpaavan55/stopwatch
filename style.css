@@ -23,12 +23,9 @@ h1 {
 .lapOuterContainer {
     height: 150px;
     width: 180px;
-    /* max-height: 150px;
-    min-height: 150px; */
     overflow-y: auto;
     padding: 10px;
     display: flex;
-    /* flex: 1; */
     flex-direction: column-reverse;
     align-items: stretch;
     justify-content: flex-end;
@@ -41,25 +38,11 @@ ul#lapDisplayContainer {
     overflow-y: auto;
     padding: 10px;
     list-style-type: none;
-    /* display: flex;
-    flex-direction: column-reverse;
-    align-items: stretch; */
-    /* justify-content: flex-end; */
-    /* border: 1px solid green; */
 }
-
-
-/* ul#lapDisplayContainer> :first-child {
-    margin-top: auto !important;
-}
-    /* use !important to prevent breakage from child margin settings */
 
 .card {
-    /* Add shadows to create the "card" effect */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
-    /* width: 200px;
-    height:400px; */
     background-color: black;
     display: flex;
     flex-direction: column;
@@ -146,19 +129,12 @@ ul#lapDisplayContainer {
 li {
     color: white;
     font-size: 13px;
-    /* margin-top: 4px;
-    margin-bottom: 4px; */
-    /* display: flex;
-    align-self: stretch;
-    justify-content: space-between; */
     align-content: stretch;
 }
 
 .lap-item {
     display: flex;
-    /* min-height: min-content; */
     justify-content: space-between;
-    /* border: 1px solid blue; */
     margin-top: 4px;
     margin-bottom: 4px;
 }
@@ -178,6 +154,5 @@ li {
 .separator {
     height: 1px;
     border-width: 0;
-    /* background-color: #202022; */
     background-color: white;
 }

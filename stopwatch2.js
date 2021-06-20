@@ -1,4 +1,3 @@
-// import Counter from './Counter.js';
 import getFormattedTime from './utils/getFormattedTime.js';
 
 let timerDisplay = document.getElementById('timerDisplay'),
@@ -6,15 +5,13 @@ let timerDisplay = document.getElementById('timerDisplay'),
     lapResetButton = document.getElementById('btnLapReset'),
     lapDisplayContainer = document.getElementById('lapDisplayContainer'),
     startTime = 0,
+    stopTime = 0,
     isRunning = false,
-    isPaused = false,
     overallTime = 0;
 let lapArr = [];
 let lapIntervalArr = [];
 
 lapResetButton.disabled = true;
-
-
 
 function changeToStop() {
     startStopButton.innerHTML = "Stop";
@@ -47,18 +44,17 @@ function changeToLap() {
     lapResetButton.classList.add("disabled");
 }
 
-function getTimeElapsedSinceLastStart() {
+function getTimeElapsedSinceLastStart(currentTime = Date.now()) {
     if (!isRunning) {
         return 0;
     }
-    return Date.now() - startTime;
+    return currentTime - startTime;
 }
 
 
 let timer;
 const timerUpdate = () => {
     timer = requestAnimationFrame(timerUpdate);
-    // timerDisplay.textContent = getFormattedTime((Date.now() - startTime));
     timerDisplay.textContent = getFormattedTime((getTime()));
 
 }
@@ -74,6 +70,17 @@ function getTime() {
 
 }
 
+function clearShortestLongestLap(children) {
+    for (let i = 0; i < children.length; i++) {
+        if (children[i].firstChild.classList.contains("shortestLap")) {
+            children[i].firstChild.classList.remove("shortestLap")
+        }
+        if (children[i].firstChild.classList.contains("longestLap")) {
+            children[i].firstChild.classList.remove("longestLap");
+        }
+    }
+}
+
 
 startStopButton.onclick = () => {
     if (!isRunning) {
@@ -83,18 +90,14 @@ startStopButton.onclick = () => {
         requestAnimationFrame(timerUpdate);
 
     } else {
-        // new_timer.stop();
         changeToStart();
         cancelAnimationFrame(timer);
-        console.log("Stop Time: " + Date.now());
-        console.log("Text Value: " + timerDisplay.textContent);
-        overallTime = overallTime + getTimeElapsedSinceLastStart();
-        console.log("Overall :" + getFormattedTime(overallTime));
+        stopTime = Date.now()
+        overallTime = overallTime + getTimeElapsedSinceLastStart(stopTime);
         isRunning = false;
-        isPaused = true;
-        // startTime = overallTime;
-        // pauseTime = Date.now();
-        // clearTimeout(time);
+        // console.log("Stop Time: " + stopTime);
+        // console.log("Text Value: " + timerDisplay.textContent);
+        // console.log("Overall :" + getFormattedTime(overallTime));
     }
 };
 
@@ -102,7 +105,6 @@ startStopButton.onclick = () => {
 
 lapResetButton.onclick = function() {
     if (String(lapResetButton.innerHTML).toLowerCase() === "lap") {
-        // console.log(minsDisplay + ":" + secsDisplay + "." + milisecsDisplay);
         let newLap = document.createElement('li');
         let lapWrapper = document.createElement('div');
         let lapNumber = document.createElement('p');
@@ -121,31 +123,26 @@ lapResetButton.onclick = function() {
         } else {
             let previousLap = lapArr[lapArr.length - 1];
             lapInterval = lapTimeStamp - previousLap[1];
-            // lapTime.innerHTML = getFormattedTime((lapTimeStamp - previousLap[1])) + " -> " + timerDisplay.textContent;
+            if (startTime > previousLap[1]) {
+                lapInterval = lapInterval - (startTime - stopTime)
+            }
+            // console.log("Previous Lap " + previousLap)
+            // console.log(`Current Lap - Previous Lap: ${lapTimeStamp - previousLap[1]} ${getFormattedTime(lapTimeStamp - previousLap[1])}`)
+            // console.log("Start Time " + startTime)
+            // console.log(`Current Lap - Start Time: ${lapTimeStamp - startTime} ${getFormattedTime(lapTimeStamp - startTime)}`)
         }
         lapTime.innerHTML = getFormattedTime(lapInterval);
         lapWrapper.id = lapIntervalArr.length + 1;
         lapIntervalArr.push([lapIntervalArr.length + 1, lapInterval]);
         lapArr.push([lapArr.length + 1, lapTimeStamp]);
-        console.log(lapArr)
-        console.log("Before Sorting:" + lapIntervalArr);
-
         if (lapArr.length > 1) {
             let children = lapDisplayContainer.children;
-            //removing previous shortest and longest laps
-            for (let i = 0; i < children.length; i++) {
-                if (children[i].firstChild.classList.contains("shortestLap")) {
-                    children[i].firstChild.classList.remove("shortestLap")
-                }
-                if (children[i].firstChild.classList.contains("longestLap")) {
-                    children[i].firstChild.classList.remove("longestLap");
-                }
-            }
+            clearShortestLongestLap(children);
             let shortestLapId, longestLapId;
             lapIntervalArr.sort((a, b) => a[1] - b[1]);
             shortestLapId = String(lapIntervalArr[0][0]);
             longestLapId = String(lapIntervalArr[lapIntervalArr.length - 1][0]);
-            console.log("After Sorting:" + lapIntervalArr);
+
             for (let i = 0; i < children.length; i++) {
                 if (children[i].firstChild.id === shortestLapId) {
                     children[i].firstChild.classList.add("shortestLap");
@@ -159,7 +156,6 @@ lapResetButton.onclick = function() {
     } else if (String(lapResetButton.innerHTML).toLowerCase() === "reset") {
         timerDisplay.textContent = "00:00.00";
         startTime = 0;
-        // isPaused = false;
         isRunning = false;
         overallTime = 0;
         removeAllChildNodes(lapDisplayContainer);
