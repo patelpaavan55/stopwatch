@@ -8,8 +8,21 @@ let timerDisplay = document.getElementById('timerDisplay'),
     stopTime = 0,
     isRunning = false,
     overallTime = 0;
-let lapArr = [];
-let lapIntervalArr = [];
+
+const Laps = {
+    numOfLaps: 0,
+    min: undefined, //{index: , duration:}
+    max: undefined, //{index: , duration:}
+    lastLapTimeStamp: undefined
+}
+
+function resetLapObject() {
+    Laps.numOfLaps = 0;
+    Laps.min = undefined;
+    Laps.max = undefined;
+    Laps.lastLapTimeStamp = undefined;
+}
+
 
 lapResetButton.disabled = true;
 
@@ -104,53 +117,71 @@ startStopButton.onclick = () => {
 
 lapResetButton.onclick = function() {
     if (String(lapResetButton.innerHTML).toLowerCase() === "lap") {
-        let newLap = document.createElement('li');
+        let newLapElement = document.createElement('li');
         let lapNumber = document.createElement('p');
         let lapTime = document.createElement('p');
-        // let lineSeparator = document.createElement('hr');
-        // lineSeparator.style.height = "1px";
-        // lineSeparator.style.borderWidth = "0";
-        // lineSeparator.style.backgroundColor = "#202022";
-        // lineSeparator.classList.add('line-separator');
-        newLap.classList.add('lap-item');
-        lapDisplayContainer.prepend(newLap);
-        newLap.append(lapNumber);
-        newLap.append(lapTime);
-        lapNumber.innerHTML = "Lap " + (lapArr.length + 1);
-        let lapTimeStamp = Date.now();
-        let lapInterval;
 
-        if (!lapArr.length) {
-            lapInterval = lapTimeStamp - startTime;
-        } else {
-            let previousLap = lapArr[lapArr.length - 1];
-            lapInterval = lapTimeStamp - previousLap[1];
-            if (startTime > previousLap[1]) {
-                lapInterval = lapInterval - (startTime - stopTime)
-            }
+        lapDisplayContainer.prepend(newLapElement);
 
+        const previousLaps = {...Laps };
+
+        newLapElement.classList.add('lap-item');
+        newLapElement.append(lapNumber);
+        newLapElement.append(lapTime);
+
+        let currentLapTimeStamp = Date.now();
+        lapNumber.innerHTML = `Lap ${Laps.numOfLaps + 1}`;
+        newLapElement.id = Laps.numOfLaps + 1;
+        console.log("Before any updates");
+        console.log(Laps);
+
+        if (Laps.numOfLaps === 0) {
+            let lapDuration = currentLapTimeStamp - startTime;
+            Laps.numOfLaps += 1;
+            lapTime.innerHTML = getFormattedTime(lapDuration);
+            Laps.max = Laps.min = { index: Laps.numOfLaps, duration: lapDuration };
+            Laps.lastLapTimeStamp = currentLapTimeStamp;
+            return;
         }
-        lapTime.innerHTML = getFormattedTime(lapInterval);
-        newLap.id = lapIntervalArr.length + 1;
-        lapIntervalArr.push([lapIntervalArr.length + 1, lapInterval]);
-        lapArr.push([lapArr.length + 1, lapTimeStamp]);
-        if (lapArr.length > 1) {
-            let children = lapDisplayContainer.children;
-            clearShortestLongestLap(children);
-            let shortestLapId, longestLapId;
-            lapIntervalArr.sort((a, b) => a[1] - b[1]);
-            shortestLapId = lapIntervalArr[0][0];
-            longestLapId = lapIntervalArr[lapIntervalArr.length - 1][0];
-            console.log(`Lap ${lapNumber.textContent} Shortest id: ${shortestLapId} Longestest id: ${longestLapId}`);
-            for (let i = 0; i < children.length; i++) {
-                if (children[i].id === shortestLapId.toString(10)) {
-                    children[i].classList.add("shortestLap");
-                } else if (children[i].id === longestLapId.toString(10)) {
-                    children[i].classList.add("longestLap");
-                }
 
+        let lapDuration = currentLapTimeStamp - Laps.lastLapTimeStamp;
+        let currentLapType = ""; //Takes  "shortestLap", "longestLap" or "" string values
+        Laps.numOfLaps += 1;
+
+
+        if (startTime > Laps.lastLapTimeStamp) {
+            lapDuration -= (startTime - stopTime);
+        }
+        Laps.lastLapTimeStamp = currentLapTimeStamp;
+        lapTime.innerHTML = getFormattedTime(lapDuration);
+
+
+        if (lapDuration < Laps.min.duration) {
+            Laps.min = { index: Laps.numOfLaps, duration: lapDuration };
+            currentLapType = "shortestLap";
+        } else if (lapDuration > Laps.max.duration) {
+            Laps.max = { index: Laps.numOfLaps, duration: lapDuration };
+            currentLapType = "longestLap";
+        }
+
+
+        if (Laps.numOfLaps === 2) {
+            lapDisplayContainer.children[Laps.numOfLaps - Laps.min.index].classList.add("shortestLap");
+            lapDisplayContainer.children[Laps.numOfLaps - Laps.max.index].classList.add("longestLap");
+            return;
+        }
+
+
+        if (currentLapType !== "") {
+            if (currentLapType === "shortestLap") {
+                lapDisplayContainer.children[Laps.numOfLaps - previousLaps.min.index].classList.remove(currentLapType);
+                lapDisplayContainer.children[Laps.numOfLaps - Laps.min.index].classList.add(currentLapType);
+            } else {
+                lapDisplayContainer.children[Laps.numOfLaps - previousLaps.max.index].classList.remove(currentLapType);
+                lapDisplayContainer.children[Laps.numOfLaps - Laps.max.index].classList.add(currentLapType);
             }
         }
+
 
     } else if (String(lapResetButton.innerHTML).toLowerCase() === "reset") {
         timerDisplay.textContent = "00:00.00";
@@ -158,8 +189,9 @@ lapResetButton.onclick = function() {
         isRunning = false;
         overallTime = 0;
         removeAllChildNodes(lapDisplayContainer);
-        lapArr = [];
-        lapIntervalArr = [];
+        resetLapObject()
+        console.log("After Reset");
+        console.log(Laps);
         changeToLap();
     }
 }
