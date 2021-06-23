@@ -1,7 +1,19 @@
 @font-face {
-    font-family: "Helevetica Neue";
+    font-family: "Helevetica Neue UltraLight";
     src: url(./fonts/Helvetica-Neue-UltraLight.ttf) format('truetype');
-    font-weight: 600;
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Helevetica Neue Thin";
+    src: url(./fonts/helveticaneue-thin.ttf) format('truetype');
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "San Francisco Regular";
+    src: url(./fonts/SanFranciscoDisplayRegular.ttf) format('truetype');
     font-style: normal;
 }
 
@@ -66,10 +78,11 @@ ul#lapDisplayContainer {
     border-radius: 50%;
     text-align: center;
     text-decoration: none;
-    font-size: 8px;
+    font-size: 9px;
     color: red;
     background: white;
     box-shadow: 0 0 1px 1.5px greenyellow;
+    font-family: "San Francisco Regular";
 }
 
 .roundButton:hover {
@@ -121,9 +134,9 @@ ul#lapDisplayContainer {
     margin-top: 60px;
     margin-bottom: 50px;
     text-align: center;
-    font-size: 40px;
+    font-size: 45px;
     font-weight: normal;
-    font-family: "Helevetica Neue"
+    font-family: "Helevetica Neue UltraLight";
 }
 
 li {
@@ -135,8 +148,13 @@ li {
 .lap-item {
     display: flex;
     justify-content: space-between;
-    margin-top: 4px;
-    margin-bottom: 4px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 10px;
+    border-bottom: 1px solid #202022;
+    font-family: "Helevetica Neue Thin";
 }
 
 .shortestLap {
